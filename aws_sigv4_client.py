@@ -1,8 +1,7 @@
-import sys, os, base64, datetime, hashlib, hmac
-import requests  # pip install requests
+import datetime, hashlib, hmac
+import requests
 from urlparse import urlsplit
-from urllib import urlencode
-import pprint
+
 import logging
 from collections import namedtuple
 
