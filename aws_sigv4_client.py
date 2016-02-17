@@ -24,6 +24,7 @@ class AwsServiceRequest():
         self.service = kwargs.get('service')
         self.region = kwargs.get('region')
         self.endpoint = kwargs.get('endpoint')
+        self.api_key = kwargs.get('api_key')
         self.body = kwargs.get('body') or ''
         url_parts = self.parse_url(kwargs.get('endpoint'))
         self.host = url_parts['host']
@@ -41,10 +42,10 @@ class AwsServiceRequest():
 
 
 class AwsCredentials():
-    def __init__(self, **kwargs):
-        self.access_key_id = kwargs.get('access_key_id')
-        self.secret_access_key = kwargs.get('secret_access_key')
-        self.session_token = kwargs.get('session_token')
+    def __init__(self, config):
+        self.access_key_id = config['access_key_id']
+        self.secret_key = config['secret_key']
+        self.session_token = config['session_token']
 
 
 class AwsSigV4Client():
@@ -86,7 +87,7 @@ class AwsSigV4Client():
         logger.debug("string_to_sign: \n{}".format(string_to_sign))
         # ************* TASK 3: CALCULATE THE SIGNATURE *************
         # Create the signing key using the function defined above.
-        signing_key = self.getSignatureKey(credentials.secret_access_key, datestamp, request.region, request.service)
+        signing_key = self.getSignatureKey(credentials.secret_key, datestamp, request.region, request.service)
 
         # Sign the string_to_sign using the signing_key
         signature = hmac.new(signing_key, (string_to_sign).encode('utf-8'), hashlib.sha256).hexdigest()
@@ -120,8 +121,8 @@ class AwsSigV4Client():
         logger.debug('Headers: {}'.format(headers))
         logger.debug('request_url: {}'.format(request_url))
         r = requests.get(request_url, headers=headers)
-        logger.debug('response status code: {}'.format(r.status_code))
-        logger.debug(r.text)
+        print ('response status code: {}'.format(r.status_code))
+        print (r.text)
 
     def sign(self, key, msg):
         return hmac.new(key, msg.encode('utf-8'), hashlib.sha256).digest()
